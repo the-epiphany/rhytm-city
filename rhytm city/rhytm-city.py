@@ -168,13 +168,11 @@ class Building:
             self.sound.set_volume(self.volume)
             self.sound.play()
 
-    def draw(self, screen, grid):
-        """Рисует здание на сетке."""
+    def draw(self, screen, grid):  # Рисует здание на сетке
         x = grid.offset_x + self.col * grid.tile_size
         y = grid.offset_y + self.row * grid.tile_size
 
-        # Квадрат здания
-        rect = pygame.Rect(x + 4, y + 4, grid.tile_size - 8, grid.tile_size - 8)
+        rect = pygame.Rect(x + 4, y + 4, grid.tile_size - 8, grid.tile_size - 8)  # Квадрат здания
         pygame.draw.rect(screen, self.color, rect)
         pygame.draw.rect(screen, (255, 255, 255), rect, 2)
 
@@ -199,14 +197,14 @@ class Sequencer:
         self.current_bar = 0  # Номер текущего такта
 
     def start(self):
-        """Запускает воспроизведение с начала."""
+        # Запускает воспроизведение с начала
         self.playing = True
         self.current_step = 0
         self.current_bar = 0
         self.timer = 0.0
 
     def stop(self):
-        """Останавливает воспроизведение."""
+        # Останавливает воспроизведение
         self.playing = False
 
     def update(self, dt):
@@ -225,8 +223,7 @@ class Sequencer:
         if self.timer >= self.step_time:
             self.timer -= self.step_time  # Сбрасываем таймер
 
-            # Увеличиваем номер шага
-            self.current_step += 1
+            self.current_step += 1  # Увеличиваем номер шага
 
             # Если закончился такт - начинаем новый
             if self.current_step >= 16:
@@ -238,13 +235,13 @@ class Sequencer:
         return False
 
     def set_bpm(self, bpm):
-        """Изменяет темп и пересчитывает длительность шага."""
+        # Изменяет темп и пересчитывает длительность шага
         self.bpm = bpm
         self.step_time = 60.0 / bpm / STEPS_PER_BEAT
 
 
 class Grid:
-    """Сетка города."""
+    # Сетка города
 
     def __init__(self):
         self.cols = 12
@@ -256,7 +253,7 @@ class Grid:
         self.offset_y = (WINDOW_HEIGHT - self.rows * self.tile_size) // 2
 
     def get_cell(self, mouse_x, mouse_y):
-        """Возвращает клетку по координатам мыши."""
+        # Возвращает клетку по координатам мыши
         # Проверяем, попадает ли мышь в сетку
         if (self.offset_x <= mouse_x < self.offset_x + self.cols * self.tile_size and
                 self.offset_y <= mouse_y < self.offset_y + self.rows * self.tile_size):
@@ -266,8 +263,7 @@ class Grid:
 
         return None
 
-    def draw(self, screen):
-        """Рисует линии сетки."""
+    def draw(self, screen):   # Рисует линии сетки
         # Вертикальные линии
         for col in range(self.cols + 1):
             x = self.offset_x + col * self.tile_size
@@ -275,8 +271,7 @@ class Grid:
                              (x, self.offset_y),
                              (x, self.offset_y + self.rows * self.tile_size))
 
-        # Горизонтальные линии
-        for row in range(self.rows + 1):
+        for row in range(self.rows + 1):     # Горизонтальные линии
             y = self.offset_y + row * self.tile_size
             pygame.draw.line(screen, COLOR_GRID,
                              (self.offset_x, y),
@@ -284,7 +279,7 @@ class Grid:
 
 
 class Game:
-    """Главный класс игры."""
+    # Главный класс игры
 
     def __init__(self):
         self.screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
@@ -337,7 +332,7 @@ class Game:
         print("  N: следующий уровень (если пройден)\n")
 
     def next_level(self):
-        """Переход на следующий уровень."""
+        # Переход на следующий уровень
         self.current_level_index += 1
 
         if self.current_level_index >= len(LEVELS):
@@ -362,7 +357,7 @@ class Game:
         print(f"Цель: {self.level['description']}\n")
 
     def check_level_goals(self):
-        """Проверяет выполнение целей уровня."""
+        # Проверяет выполнение целей уровня
         if self.level_completed:
             return
 
@@ -375,7 +370,7 @@ class Game:
             if self.sequencer.bpm != self.level['required_bpm']:
                 return
 
-        # Проверяем уровень громкости (если требуется)
+        # Проверяем уровень громкости (если нужно)
         if self.level['max_volume'] is not None:
             if self.current_rms > self.level['max_volume']:
                 return
@@ -420,7 +415,7 @@ class Game:
         return None
 
     def handle_events(self):
-        """Обработка событий."""
+        # Обработка событий
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
@@ -522,7 +517,7 @@ class Game:
                         self.next_level()
 
     def click_on_editor(self, mx, my):
-        """Обрабатывает клик по редактору паттерна. Возвращает True если попали."""
+        # Обрабатывает клик по редактору паттерна. Возвращает True если попали
         panel_y = WINDOW_HEIGHT - 140
 
         if my < panel_y:
@@ -565,7 +560,7 @@ class Game:
         return False
 
     def update(self):
-        """Обновление логики игры каждый кадр."""
+        # Обновление логики игры каждый кадр
         dt = self.clock.get_time() / 1000.0  # Время с прошлого кадра в секундах
 
         # Пересчитываем RMS на каждом кадре
@@ -584,7 +579,7 @@ class Game:
                 self.check_level_goals()  # Проверяем цели уровня
 
     def play_step(self):
-        """Проигрывает все звуки для текущего шага."""
+        # Проигрывает все звуки для текущего шага
         step = self.sequencer.current_step
 
         # Проверяем, есть ли соло-здания (если есть - играют только они)
@@ -597,7 +592,7 @@ class Game:
                 building.play(any_solo)
 
     def draw(self):
-        """Отрисовка."""
+        # Отрисовка
         self.screen.fill(COLOR_BG)
 
         # Сетка
@@ -620,7 +615,7 @@ class Game:
         pygame.display.flip()
 
     def draw_hud(self):
-        """Рисует верхнюю панель."""
+        # Рисует верхнюю панель
         # Фон панели
         pygame.draw.rect(self.screen, (30, 30, 45), (0, 0, WINDOW_WIDTH, 80))
         pygame.draw.line(self.screen, (60, 60, 80), (0, 80), (WINDOW_WIDTH, 80), 2)
@@ -698,7 +693,7 @@ class Game:
         self.screen.blit(rms_label, (rms_x + rms_width + 10, rms_y - 2))
 
     def draw_level_panel(self):
-        """Рисует панель с информацией об уровне."""
+        # Рисует панель с информацией об уровне
         # Панель справа
         panel_x = WINDOW_WIDTH - 350
         panel_y = 120
@@ -869,4 +864,5 @@ class Game:
 # Запуск
 if __name__ == "__main__":
     game = Game()
+
     game.run()
